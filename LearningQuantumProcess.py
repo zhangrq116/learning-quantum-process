@@ -38,6 +38,8 @@ sigZ = np.array([[1.0, 0.0j], [0.0j, -1.0]])
 
 N = 50
 
+print("program start")
+
 def kron(ls):
     A = ls[0]
     for X in ls[1:]:
@@ -238,6 +240,8 @@ all_data_training_set_scaling = []
 all_states = []
 all_values = []
 
+print("start reading data")
+
 with open("50spins-oneZ-allt-homogeneous/states.txt") as f:
     for line in f:
         all_states.append(ast.literal_eval(line))
@@ -246,8 +250,15 @@ with open("50spins-oneZ-allt-homogeneous/values.txt") as f:
     for line in f:
         all_values.append([ast.literal_eval(line)[6]])
 
+print("start transforming data")
+
 all_X_list = transform_states(all_states)
+# 其中 all_states 是一个 list, 里面的每一个元素是一个长度为 10000 的 list, 每个元素是一个 quantum state. 其中每一个quantum state  还是一个长度是 150 的list
+# 其中每个 quantum state 是一个长度是 150 的list, range(0,3) 编码一个single qubit 量子态, 满足平方和是 1. range(3,6), range(6,9) 等等都是一个量子态. 
         
+# all_values 是一个 list, 长度是 10000. 我猜测每个元素是对应每个训练集样本的输出电路的精确值. 
+
+print("正式计算开始")
 for test_size in [0.999, 0.997, 0.99, 0.97, 0.9, 0.7, 0.1]: # 10, 30, 100, 300, 1000, 3000, 9000 # 注释中对应的就是训练集的大小, 相当于训练集越大, test set 就越小. 
     for seed in range(10):
         list_of_score_AA, _, _ = train_sparse_ML_transformed(all_X_list, all_values, test_size=test_size, random_seed=seed)
